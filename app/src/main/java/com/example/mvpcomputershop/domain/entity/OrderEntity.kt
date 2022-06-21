@@ -1,6 +1,10 @@
 package com.example.mvpcomputershop.domain.entity
 
 data class OrderEntity(
+    val order: OrderData
+)
+
+data class OrderData(
     val id: Int,
     val status: String,
     val address: String,
