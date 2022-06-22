@@ -6,10 +6,9 @@ import io.reactivex.rxjava3.core.Single
 
 interface ICartRepository {
     fun getCart(token: String): Single<CartEntity>
-
-    fun changeQuantityItemInCart(token: String, basketItemId: Int, quantity: ItemEntity):
-            Single<CartEntity>
-
-    fun deleteItemFromBasket(token: String, basketItemId: Int):
-            Single<CartEntity>
+    fun changeQuantityItemInCart(token: String,
+                                 basketItemId: Int,
+                                 quantity: ItemEntity): Single<CartEntity>
+    fun deleteItemFromBasket(token: String,
+                             basketItemId: Int): Single<CartEntity>
 }
