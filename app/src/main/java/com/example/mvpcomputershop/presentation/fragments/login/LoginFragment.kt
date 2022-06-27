@@ -1,6 +1,7 @@
 package com.example.mvpcomputershop.presentation.fragments.login
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,35 +45,28 @@ class LoginFragment : MvpAppCompatFragment(), ILoginView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        login()
-    }
-
-    private fun getData() {
-        val email = binding?.signEmail?.text.toString()
-        val password = binding?.signPasswordLogin?.text.toString()
-        val loginRequest = LoginViewModel(email, password)
-        presenter.getRequest(loginRequest)
-    }
-
-    private fun login() {
-        binding?.btnLogin?.setOnClickListener {
-            getData()
-            presenter.login()
-            makeToast()
-        }
-    }
-
-    private fun makeToast() {
-        presenter.token.observe(viewLifecycleOwner){
-            Toast.makeText(
-                requireContext(),
-                presenter.token.value.toString(),
-                Toast.LENGTH_SHORT).show()
-        }
+        setListeners()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         initBinding = null
     }
+
+    override fun showMessage(token: String) {
+        Toast.makeText(requireContext(), token, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setListeners() {
+        binding?.btnLogin?.setOnClickListener {
+            presenter.login(getData())
+        }
+    }
+
+    private fun getData(): LoginViewModel {
+        val email = binding?.signEmail?.text.toString()
+        val password = binding?.signPasswordLogin?.text.toString()
+        return LoginViewModel(email, password)
+    }
+
 }
