@@ -11,7 +11,7 @@ object ApiUserMapper{
             LoginRequestApiModel(
                 email = email,
                 password = password,
-                deviceName = null,
+                deviceName = android.os.Build.MODEL,
             )
         }
     }
@@ -21,7 +21,7 @@ object ApiUserMapper{
             SignUpRequestApiModel(
                 email = email,
                 password = password,
-                passwordConfirmation = null,
+                passwordConfirmation = confirmPassword,
             )
         }
     }

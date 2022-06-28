@@ -8,5 +8,5 @@ data class SignUpRequestApiModel(
     @SerializedName("password")
     val password: String,
     @SerializedName("password_confirmation")
-    val passwordConfirmation: String?,
+    val passwordConfirmation: String? = null,
 )
