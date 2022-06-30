@@ -1,4 +1,4 @@
-package com.example.mvpcomputershop.presentation.navigation
+package com.example.mvpcomputershop.presentation.navigation.main
 
 import com.github.terrakok.cicerone.Screen
 

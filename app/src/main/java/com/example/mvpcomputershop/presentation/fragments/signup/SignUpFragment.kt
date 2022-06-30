@@ -1,4 +1,4 @@
-package com.example.mvpcomputershop.presentation.fragments.login
+package com.example.mvpcomputershop.presentation.fragments.signup
 
 import android.content.Context
 import android.os.Bundle
@@ -7,26 +7,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.mvpcomputershop.App
-import com.example.mvpcomputershop.databinding.FragmentLoginBinding
-import com.example.mvpcomputershop.presentation.model.login.LoginViewModel
+import com.example.mvpcomputershop.databinding.FragmentSignUpBinding
+import com.example.mvpcomputershop.presentation.model.signup.SignUpViewModel
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 import javax.inject.Provider
 
-class LoginFragment : MvpAppCompatFragment(), ILoginView {
+class SignUpFragment : MvpAppCompatFragment(), ISignUpView{
 
     @Inject
-    lateinit var provider: Provider<LoginPresenter>
+    lateinit var provider: Provider<SignUpPresenter>
 
     @InjectPresenter
-    lateinit var presenter: LoginPresenter
+    lateinit var presenter: SignUpPresenter
 
     @ProvidePresenter
-    fun providePresenter(): LoginPresenter = provider.get()
+    fun providePresenter(): SignUpPresenter = provider.get()
 
-    private var initBinding: FragmentLoginBinding? = null
+    private var initBinding: FragmentSignUpBinding? = null
     private val binding
         get() = initBinding
 
@@ -39,7 +39,7 @@ class LoginFragment : MvpAppCompatFragment(), ILoginView {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        initBinding = FragmentLoginBinding.inflate(inflater, container, false)
+        initBinding = FragmentSignUpBinding.inflate(inflater, container, false)
         return binding?.root
     }
 
@@ -58,15 +58,17 @@ class LoginFragment : MvpAppCompatFragment(), ILoginView {
     }
 
     private fun setListeners() {
-        binding?.btnLogin?.setOnClickListener {
-            presenter.login(getData())
+        binding?.btnSignUp?.setOnClickListener {
+            presenter.signUp(getData())
         }
     }
 
-    private fun getData(): LoginViewModel {
+    private fun getData(): SignUpViewModel {
         val email = binding?.signEmail?.text.toString()
-        val password = binding?.signPasswordLogin?.text.toString()
-        return LoginViewModel(email, password)
+        val password = binding?.signPassword?.text.toString()
+        val confirmPassword = binding?.confirmSignPassword?.text.toString()
+        return SignUpViewModel(email, password, confirmPassword)
     }
+
 
 }

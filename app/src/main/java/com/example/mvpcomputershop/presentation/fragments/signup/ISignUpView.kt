@@ -1,11 +1,10 @@
-package com.example.mvpcomputershop.presentation.fragments.login
+package com.example.mvpcomputershop.presentation.fragments.signup
 
 import moxy.MvpView
 import moxy.viewstate.strategy.OneExecutionStateStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
-interface ILoginView : MvpView {
-
+interface ISignUpView: MvpView {
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showMessage(token: String)
 }

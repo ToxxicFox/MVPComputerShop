@@ -5,7 +5,7 @@ import android.os.Bundle
 import com.example.mvpcomputershop.App
 import com.example.mvpcomputershop.R
 import com.example.mvpcomputershop.databinding.ActivityMainBinding
-import com.example.mvpcomputershop.presentation.navigation.IScreenHolder
+import com.example.mvpcomputershop.presentation.navigation.main.IScreenHolder
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
