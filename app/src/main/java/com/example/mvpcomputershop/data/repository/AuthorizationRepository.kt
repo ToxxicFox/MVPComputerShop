@@ -6,10 +6,12 @@ import com.example.mvpcomputershop.data.network.api.AuthApi
 import com.example.mvpcomputershop.domain.entity.UserEntity
 import com.example.mvpcomputershop.domain.repository.IAuthRepository
 import io.reactivex.rxjava3.core.Single
+import javax.inject.Inject
 
-class AuthorizationRepository(
-    private val api: AuthApi = AuthApi.getInstance()
+class AuthorizationRepository @Inject constructor(
+    private val api: AuthApi
 ) : IAuthRepository {
+
     override fun signUp(user: UserEntity): Single<String> {
         return api.signUp(user.toSignUpRequestApiModel())
     }
