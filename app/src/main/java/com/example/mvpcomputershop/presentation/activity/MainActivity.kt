@@ -42,19 +42,19 @@ class MainActivity : AppCompatActivity() {
             bottomNavigationView.setOnItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.navigation_catalog -> {
-                        router.navigateTo(screenHolder.openCatalogFragment())
+                        router.replaceScreen(screenHolder.openCatalogFragment())
                         true
                     }
                     R.id.navigation_cart -> {
-                        router.navigateTo(screenHolder.openCartFragment())
+                        router.replaceScreen(screenHolder.openCartFragment())
                         true
                     }
                     R.id.navigation_profile -> {
-                        router.navigateTo(screenHolder.openProfileFragment())
+                        router.replaceScreen(screenHolder.openProfileFragment())
                         true
                     }
                     else -> {
-                        router.navigateTo(screenHolder.openCatalogFragment())
+                        router.replaceScreen(screenHolder.openCatalogFragment())
                         true
                     }
                 }
@@ -63,16 +63,16 @@ class MainActivity : AppCompatActivity() {
             bottomNavigationView.setOnItemReselectedListener { item ->
                 when (item.itemId) {
                     R.id.navigation_catalog -> {
-                        router.navigateTo(screenHolder.openCatalogFragment())
+                        router.replaceScreen(screenHolder.openCatalogFragment())
                     }
                     R.id.navigation_cart -> {
-                        router.navigateTo(screenHolder.openCartFragment())
+                        router.replaceScreen(screenHolder.openCartFragment())
                     }
                     R.id.navigation_profile -> {
-                        router.navigateTo(screenHolder.openProfileFragment())
+                        router.replaceScreen(screenHolder.openProfileFragment())
                     }
                     else -> {
-                        router.navigateTo(screenHolder.openCatalogFragment())
+                        router.replaceScreen(screenHolder.openCatalogFragment())
                     }
                 }
             }
