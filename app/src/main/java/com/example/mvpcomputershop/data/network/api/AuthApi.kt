@@ -28,31 +28,4 @@ interface AuthApi {
         @Body user: SignUpRequestApiModel
     ) : Single<String>
 
-    companion object ApiFactory{
-        private var api: AuthApi? = null
-        private val gson = GsonBuilder().setLenient().create()
-
-        fun getInstance(): AuthApi {
-            if (api == null) {
-
-                val retrofit = Retrofit.Builder()
-                    .baseUrl(BuildConfig.BASE_URL)
-                    .client(OkHttpClient.Builder().also { client ->
-                        if (BuildConfig.DEBUG) {
-                            val logging = HttpLoggingInterceptor()
-                            logging.setLevel(HttpLoggingInterceptor.Level.BODY)
-                            client.addInterceptor(logging)
-                        }
-                    }.build())
-                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build()
-
-                api = retrofit.create(AuthApi::class.java)
-            }
-
-            return api as AuthApi
-        }
-    }
-
 }

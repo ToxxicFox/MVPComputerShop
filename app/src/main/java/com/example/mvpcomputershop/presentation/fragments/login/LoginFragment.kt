@@ -1,13 +1,16 @@
 package com.example.mvpcomputershop.presentation.fragments.login
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.mvpcomputershop.App
+import com.example.mvpcomputershop.R
+import com.example.mvpcomputershop.data.network.api.AuthApi
 import com.example.mvpcomputershop.databinding.FragmentLoginBinding
+import com.example.mvpcomputershop.presentation.fragments.signup.SignUpFragment
 import com.example.mvpcomputershop.presentation.model.login.LoginViewModel
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
@@ -20,6 +23,9 @@ class LoginFragment : MvpAppCompatFragment(), ILoginView {
     @Inject
     lateinit var provider: Provider<LoginPresenter>
 
+    @Inject
+    lateinit var api: AuthApi
+
     @InjectPresenter
     lateinit var presenter: LoginPresenter
 
@@ -30,9 +36,9 @@ class LoginFragment : MvpAppCompatFragment(), ILoginView {
     private val binding
         get() = initBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onAttach(context: Context) {
         App.appInstance?.appComponent?.inject(this)
-        super.onCreate(savedInstanceState)
+        super.onAttach(context)
     }
 
     override fun onCreateView(
@@ -61,12 +67,25 @@ class LoginFragment : MvpAppCompatFragment(), ILoginView {
         binding?.btnLogin?.setOnClickListener {
             presenter.login(getData())
         }
+
+        binding?.navToSignUp?.setOnClickListener {
+            openSignUpFragment()
+        }
     }
 
     private fun getData(): LoginViewModel {
         val email = binding?.signEmail?.text.toString()
         val password = binding?.signPasswordLogin?.text.toString()
         return LoginViewModel(email, password)
+    }
+
+    private fun openSignUpFragment() {
+        activity?.supportFragmentManager?.apply {
+            beginTransaction()
+                .replace(R.id.container, SignUpFragment())
+                .addToBackStack("")
+                .commit()
+        }
     }
 
 }

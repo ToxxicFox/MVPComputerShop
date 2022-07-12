@@ -1,7 +1,7 @@
-package com.example.mvpcomputershop.presentation.di
+package com.example.mvpcomputershop.presentation.di.navigation
 
-import com.example.mvpcomputershop.presentation.navigation.IScreenHolder
-import com.example.mvpcomputershop.presentation.navigation.ScreenHolder
+import com.example.mvpcomputershop.presentation.navigation.main.IScreenHolder
+import com.example.mvpcomputershop.presentation.navigation.main.ScreenHolder
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
