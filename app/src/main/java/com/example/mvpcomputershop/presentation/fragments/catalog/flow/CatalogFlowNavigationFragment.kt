@@ -1,16 +1,17 @@
-package com.example.mvpcomputershop.presentation.fragments.tabfragments.profile
+package com.example.mvpcomputershop.presentation.fragments.catalog.flow
 
 import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.example.mvpcomputershop.App
 import com.example.mvpcomputershop.R
-import com.example.mvpcomputershop.databinding.FragmentTabProfileBinding
-import com.example.mvpcomputershop.presentation.di.navigation.ProfileNavigation
-import com.example.mvpcomputershop.presentation.navigation.profile.IProfileScreenOpener
+import com.example.mvpcomputershop.databinding.FragmentCatalogFlowNavigationBinding
+import com.example.mvpcomputershop.presentation.di.navigation.FlowNavigation
+import com.example.mvpcomputershop.presentation.navigation.catalog.ICatalogScreenOpener
+import com.example.mvpcomputershop.presentation.navigation.main.BackButtonListener
 import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
@@ -18,25 +19,24 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 import javax.inject.Inject
 
 
-class TabProfileFragment : Fragment() {
-
+class CatalogFlowNavigationFragment : Fragment(), BackButtonListener {
     @Inject
-    @ProfileNavigation
+    @FlowNavigation
     lateinit var navigatorTabProfileHolder: NavigatorHolder
 
     @Inject
-    @ProfileNavigation
+    @FlowNavigation
     lateinit var routerProfile: Router
 
     @Inject
-    @ProfileNavigation
-    lateinit var screenOpenProfile: IProfileScreenOpener
+    @FlowNavigation
+    lateinit var screenOpenCatalog: ICatalogScreenOpener
 
     private val navigator: Navigator by lazy {
-        AppNavigator(requireActivity(), R.id.tab_profile_nav_container)
+        AppNavigator(requireActivity(), R.id.tab_catalog_nav_container, childFragmentManager)
     }
 
-    private var initBinding: FragmentTabProfileBinding? = null
+    private var initBinding: FragmentCatalogFlowNavigationBinding? = null
     private val binding
         get() = initBinding
 
@@ -49,14 +49,14 @@ class TabProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        initBinding = FragmentTabProfileBinding.inflate(inflater, container, false)
+        initBinding = FragmentCatalogFlowNavigationBinding.inflate(inflater, container, false)
         return  binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (childFragmentManager.findFragmentById(R.id.tab_profile_nav_container) == null) {
-            routerProfile.replaceScreen(screenOpenProfile.openLoginFragment())
+        if (childFragmentManager.findFragmentById(R.id.tab_catalog_nav_container) == null) {
+            routerProfile.replaceScreen(screenOpenCatalog.openCatalogFragment())
         }
     }
 
@@ -73,5 +73,16 @@ class TabProfileFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         initBinding = null
+    }
+
+    override fun onBackPressed(): Boolean {
+        val fragment = childFragmentManager.findFragmentById(R.id.tab_catalog_nav_container)
+        return if (fragment != null && fragment is BackButtonListener
+            && (fragment as BackButtonListener).onBackPressed()) {
+            true
+        } else {
+            routerProfile.exit()
+            true
+        }
     }
 }

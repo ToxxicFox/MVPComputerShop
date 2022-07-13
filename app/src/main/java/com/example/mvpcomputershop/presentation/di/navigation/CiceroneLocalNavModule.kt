@@ -1,5 +1,9 @@
 package com.example.mvpcomputershop.presentation.di.navigation
 
+import com.example.mvpcomputershop.presentation.navigation.cart.CartScreenOpener
+import com.example.mvpcomputershop.presentation.navigation.cart.ICartScreenOpener
+import com.example.mvpcomputershop.presentation.navigation.catalog.CatalogScreenOpener
+import com.example.mvpcomputershop.presentation.navigation.catalog.ICatalogScreenOpener
 import com.example.mvpcomputershop.presentation.navigation.profile.IProfileScreenOpener
 import com.example.mvpcomputershop.presentation.navigation.profile.ProfileScreenOpener
 import com.github.terrakok.cicerone.Cicerone
@@ -16,26 +20,32 @@ class CiceroneLocalProfileNavModule {
     private val cicerone: Cicerone<Router> = Cicerone.create()
 
     @Provides
-    @ProfileNavigation
+    @FlowNavigation
     fun ciceroneProfile(): Cicerone<Router> = cicerone
 
     @Provides
-    @ProfileNavigation
+    @FlowNavigation
     fun navigatorTabProfileHolder(): NavigatorHolder = cicerone.getNavigatorHolder()
 
     @Provides
-    @ProfileNavigation
+    @FlowNavigation
     fun routerProfile(): Router = cicerone.router
 
     @Provides
-    @ProfileNavigation
+    @FlowNavigation
     @Singleton
     fun screenOpenProfile(): IProfileScreenOpener = ProfileScreenOpener()
-}
 
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ProfileNavigation
+    @Provides
+    @FlowNavigation
+    @Singleton
+    fun screenOpenCatalog(): ICatalogScreenOpener = CatalogScreenOpener()
+
+    @Provides
+    @FlowNavigation
+    @Singleton
+    fun screenOpenCart(): ICartScreenOpener = CartScreenOpener()
+}
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)

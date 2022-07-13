@@ -1,91 +1,127 @@
 package com.example.mvpcomputershop.presentation.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.example.mvpcomputershop.App
 import com.example.mvpcomputershop.R
 import com.example.mvpcomputershop.databinding.ActivityMainBinding
-import com.example.mvpcomputershop.presentation.navigation.main.IScreenHolder
-import com.github.terrakok.cicerone.NavigatorHolder
+import com.example.mvpcomputershop.presentation.fragments.cart.flow.CartFragmentFlowNavigationFragment
+import com.example.mvpcomputershop.presentation.fragments.catalog.flow.CatalogFlowNavigationFragment
+import com.example.mvpcomputershop.presentation.fragments.login.flow.ProfileFlowNavigationFragment
+import com.example.mvpcomputershop.presentation.navigation.main.BackButtonListener
+import com.example.mvpcomputershop.presentation.navigation.main.TabKeys
 import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.github.terrakok.cicerone.androidx.FragmentScreen
+import moxy.MvpAppCompatActivity
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : MvpAppCompatActivity(), MainView {
 
-    @Inject
-    lateinit var navigatorHolder: NavigatorHolder
+    private lateinit var binding: ActivityMainBinding
 
     @Inject
     lateinit var router: Router
 
-    @Inject
-    lateinit var screenHolder: IScreenHolder
+    @InjectPresenter
+    lateinit var presenter: MainActivityPresenter
 
-    private val navigator = AppNavigator(this, R.id.container)
-
-    private lateinit var binding: ActivityMainBinding
+    @ProvidePresenter
+    fun initMainPresenter() = MainActivityPresenter(router)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         App.appInstance?.appComponent?.inject(this)
+        super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         if (savedInstanceState == null) {
-            router.replaceScreen(screenHolder.openCatalogFragment())
+            selectTab(TabKeys.CATALOG)
         }
 
         with(binding) {
             bottomNavigationView.setOnItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.navigation_catalog -> {
-                        router.replaceScreen(screenHolder.openCatalogFragment())
+                        selectTab(TabKeys.CATALOG)
                         true
                     }
                     R.id.navigation_cart -> {
-                        router.replaceScreen(screenHolder.openCartFragment())
+                        selectTab(TabKeys.CART)
                         true
                     }
                     R.id.navigation_profile -> {
-                        router.replaceScreen(screenHolder.openProfileFragment())
+                        selectTab(TabKeys.PROFILE)
                         true
                     }
                     else -> {
-                        router.replaceScreen(screenHolder.openCatalogFragment())
-                        true
-                    }
-                }
-            }
-
-            bottomNavigationView.setOnItemReselectedListener { item ->
-                when (item.itemId) {
-                    R.id.navigation_catalog -> {
-                        router.replaceScreen(screenHolder.openCatalogFragment())
-                    }
-                    R.id.navigation_cart -> {
-                        router.replaceScreen(screenHolder.openCartFragment())
-                    }
-                    R.id.navigation_profile -> {
-                        router.replaceScreen(screenHolder.openProfileFragment())
-                    }
-                    else -> {
-                        router.replaceScreen(screenHolder.openCatalogFragment())
+                        selectTab(TabKeys.CATALOG)
+                        false
                     }
                 }
             }
         }
     }
 
-    override fun onResumeFragments() {
-        super.onResumeFragments()
-        navigatorHolder.setNavigator(navigator)
+    private fun selectTab(tab: TabKeys) {
+        val fm = supportFragmentManager
+        var currentFragment: Fragment? = null
+        val fragments = fm.fragments
+        for (f in fragments) {
+            if (f.isVisible) {
+                currentFragment = f
+                break
+            }
+        }
+        val newFragment = fm.findFragmentByTag(tab.name)
+        if (currentFragment != null && newFragment != null && currentFragment === newFragment) return
+        val transaction = fm.beginTransaction()
+        if (newFragment == null) {
+            transaction.add(
+                R.id.container,
+                createTab(tab).createFragment(fm.fragmentFactory), tab.name
+            )
+        }
+        if (currentFragment != null) {
+            transaction.hide(currentFragment)
+        }
+        if (newFragment != null) {
+            transaction.show(newFragment)
+        }
+        transaction.commitNow()
     }
 
-    override fun onPause() {
-        super.onPause()
-        navigatorHolder.removeNavigator()
+    override fun onBackPressed() {
+        val fm = supportFragmentManager
+        var fragment: Fragment? = null
+        val fragments = fm.fragments
+        for (f in fragments) {
+            if (f.isVisible) {
+                fragment = f
+                break
+            }
+        }
+        if (fragment != null && fragment is BackButtonListener
+            && (fragment as BackButtonListener).onBackPressed()) {
+            return
+        } else {
+            presenter.onBackPressed()
+        }
+    }
+
+    private fun createTab(tab: TabKeys) = FragmentScreen {
+        when(tab) {
+            TabKeys.CATALOG -> {
+                CatalogFlowNavigationFragment()
+            }
+            TabKeys.PROFILE -> {
+                ProfileFlowNavigationFragment()
+            }
+            TabKeys.CART -> {
+                CartFragmentFlowNavigationFragment()
+            }
+        }
     }
 }

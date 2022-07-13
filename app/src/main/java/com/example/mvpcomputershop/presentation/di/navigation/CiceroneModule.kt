@@ -1,7 +1,5 @@
 package com.example.mvpcomputershop.presentation.di.navigation
 
-import com.example.mvpcomputershop.presentation.navigation.main.IScreenHolder
-import com.example.mvpcomputershop.presentation.navigation.main.ScreenHolder
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
@@ -24,8 +22,4 @@ class CiceroneModule {
     @Provides
     @Singleton
     fun router(): Router = cicerone.router
-
-    @Provides
-    @Singleton
-    fun screenOpen(): IScreenHolder = ScreenHolder()
 }

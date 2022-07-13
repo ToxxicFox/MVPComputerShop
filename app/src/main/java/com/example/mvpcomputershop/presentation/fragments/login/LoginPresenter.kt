@@ -3,7 +3,7 @@ package com.example.mvpcomputershop.presentation.fragments.login
 
 import android.util.Log
 import com.example.mvpcomputershop.domain.usecases.profile.LoginUseCase
-import com.example.mvpcomputershop.presentation.di.navigation.ProfileNavigation
+import com.example.mvpcomputershop.presentation.di.navigation.FlowNavigation
 import com.example.mvpcomputershop.presentation.model.login.LoginViewModel
 import com.example.mvpcomputershop.presentation.model.mapper.LoginUserMapper.toLoginEntity
 import com.example.mvpcomputershop.presentation.navigation.profile.IProfileScreenOpener
@@ -18,9 +18,9 @@ import javax.inject.Inject
 @InjectViewState
 class LoginPresenter @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    @ProfileNavigation
+    @FlowNavigation
     private val router: Router,
-    @ProfileNavigation
+    @FlowNavigation
     private val screenOpener: IProfileScreenOpener
 ) : MvpPresenter<ILoginView>() {
 
