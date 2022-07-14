@@ -34,10 +34,13 @@ class CatalogPresenter @Inject constructor(
     }
 
     private var currentPage = FIRST
+    private var lastPage = LAST
 
     fun onLoadNextPage(){
         currentPage++
-        getProduct(currentPage)
+        if (currentPage <= lastPage) {
+            getProduct(currentPage)
+        }
     }
 
     private fun getProduct(nextPage: Int){
@@ -52,9 +55,13 @@ class CatalogPresenter @Inject constructor(
             }
             .subscribe({
                 viewState.displayProducts(it.data)
+                val lastPageFromUri = Uri.parse(it.links.last).getQueryParameter("page")?.toInt()
+                if (lastPageFromUri != null) {
+                    lastPage = lastPageFromUri
+                }
             }, { error ->
                 error.printStackTrace()
-                Log.e("CATALOG", error.toString())
+                Log.e("CATALOG_PRODUCTS", error.toString())
             }).let(compositeDisposable::add)
     }
 
@@ -62,22 +69,13 @@ class CatalogPresenter @Inject constructor(
         getCategoriesUseCase.getCategories()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                // show loader
-            }
-            .doFinally {
-                // hide loader
-            }
             .subscribe({
                 viewState.displayCategories(it.data)
             }, { error ->
                 error.printStackTrace()
-                Log.e("CATALOG", error.toString())
+                Log.e("CATALOG_CATEGORIES", error.toString())
             }).let(compositeDisposable::add)
     }
-
-
-
 
     init {
         getProduct(FIRST)
@@ -86,6 +84,7 @@ class CatalogPresenter @Inject constructor(
 
     companion object{
         const val FIRST = 1
+        const val LAST = 99
     }
 
 }

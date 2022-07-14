@@ -13,5 +13,4 @@ interface ICatalogView: MvpView {
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun displayCategories(items: ArrayList<CategoryData>)
-
 }
