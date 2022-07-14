@@ -5,13 +5,10 @@ import androidx.fragment.app.Fragment
 import com.example.mvpcomputershop.App
 import com.example.mvpcomputershop.R
 import com.example.mvpcomputershop.databinding.ActivityMainBinding
-import com.example.mvpcomputershop.presentation.fragments.cart.flow.CartFragmentFlowNavigationFragment
-import com.example.mvpcomputershop.presentation.fragments.catalog.flow.CatalogFlowNavigationFragment
-import com.example.mvpcomputershop.presentation.fragments.login.flow.ProfileFlowNavigationFragment
 import com.example.mvpcomputershop.presentation.navigation.main.BackButtonListener
+import com.example.mvpcomputershop.presentation.navigation.main.ScreenFactory
 import com.example.mvpcomputershop.presentation.navigation.main.TabKeys
 import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.FragmentScreen
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
@@ -67,21 +64,14 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     private fun selectTab(tab: TabKeys) {
         val fm = supportFragmentManager
-        var currentFragment: Fragment? = null
-        val fragments = fm.fragments
-        for (f in fragments) {
-            if (f.isVisible) {
-                currentFragment = f
-                break
-            }
-        }
+        val currentFragment = fm.fragments.find { it.isVisible }
         val newFragment = fm.findFragmentByTag(tab.name)
         if (currentFragment != null && newFragment != null && currentFragment === newFragment) return
         val transaction = fm.beginTransaction()
         if (newFragment == null) {
             transaction.add(
                 R.id.container,
-                createTab(tab).createFragment(fm.fragmentFactory), tab.name
+                ScreenFactory.createTab(tab).createFragment(fm.fragmentFactory), tab.name
             )
         }
         if (currentFragment != null) {
@@ -95,33 +85,12 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     override fun onBackPressed() {
         val fm = supportFragmentManager
-        var fragment: Fragment? = null
-        val fragments = fm.fragments
-        for (f in fragments) {
-            if (f.isVisible) {
-                fragment = f
-                break
-            }
-        }
+        val fragment: Fragment? = fm.fragments.find { it.isVisible }
         if (fragment != null && fragment is BackButtonListener
             && (fragment as BackButtonListener).onBackPressed()) {
             return
         } else {
             presenter.onBackPressed()
-        }
-    }
-
-    private fun createTab(tab: TabKeys) = FragmentScreen {
-        when(tab) {
-            TabKeys.CATALOG -> {
-                CatalogFlowNavigationFragment()
-            }
-            TabKeys.PROFILE -> {
-                ProfileFlowNavigationFragment()
-            }
-            TabKeys.CART -> {
-                CartFragmentFlowNavigationFragment()
-            }
         }
     }
 }
