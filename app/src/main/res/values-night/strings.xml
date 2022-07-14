@@ -9,4 +9,7 @@
     <string name="title_profile">Профиль</string>
     <string name="confirm_password">Повторите пароль</string>
     <string name="sign_up">Зарегистрироваться</string>
+    <string name="category_title">Материнские платы</string>
+    <string name="product_price">5999</string>
+    <string name="product_title">AMD-5900444</string>
 </resources>

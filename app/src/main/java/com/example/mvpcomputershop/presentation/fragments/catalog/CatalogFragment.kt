@@ -1,24 +1,52 @@
 package com.example.mvpcomputershop.presentation.fragments.catalog
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.mvpcomputershop.R
+import com.example.mvpcomputershop.App
+import com.example.mvpcomputershop.databinding.FragmentCatalogBinding
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
+import javax.inject.Inject
+import javax.inject.Provider
 
-class CatalogFragment : Fragment() {
+class CatalogFragment : MvpAppCompatFragment(), ICatalogView {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    @Inject
+    lateinit var provider: Provider<CatalogPresenter>
+
+    @InjectPresenter
+    lateinit var presenter: CatalogPresenter
+
+    @ProvidePresenter
+    fun providePresenter(): CatalogPresenter = provider.get()
+
+    private var initBinding: FragmentCatalogBinding? = null
+    private val binding
+        get() = initBinding
+
+    override fun onAttach(context: Context) {
+        App.appInstance?.appComponent?.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_catalog, container, false)
+        initBinding = FragmentCatalogBinding.inflate(inflater, container, false)
+        return binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        initBinding = null
     }
 }
