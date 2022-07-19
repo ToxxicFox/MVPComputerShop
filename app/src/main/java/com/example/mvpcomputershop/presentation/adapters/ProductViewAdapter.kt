@@ -19,6 +19,12 @@ class ProductViewAdapter:
         notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun clearList() {
+        orderItems.clear()
+        notifyDataSetChanged()
+    }
+
     class ProductViewHolder(private val binding: ProductItemBinding):
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: ProductEntity) {

@@ -36,7 +36,7 @@ class CatalogFragment : MvpAppCompatFragment(), ICatalogView {
         get() = initBinding
 
     private val productAdapter = ProductViewAdapter()
-    private val categoryAdapter = CategoryViewAdapter()
+    private val categoryAdapter = CategoryViewAdapter(action = ::onFilterClick)
 
     override fun onAttach(context: Context) {
         App.appInstance?.appComponent?.inject(this)
@@ -63,6 +63,10 @@ class CatalogFragment : MvpAppCompatFragment(), ICatalogView {
 
     override fun displayCategories(items: ArrayList<CategoryData>) {
         categoryAdapter.setUpdateCategory(items)
+    }
+
+    override fun setFilter() {
+        productAdapter.clearList()
     }
 
     override fun onDestroyView() {
@@ -92,5 +96,9 @@ class CatalogFragment : MvpAppCompatFragment(), ICatalogView {
             }
 
         })
+    }
+
+    private fun onFilterClick(id:Int){
+        presenter.setFilterById(id)
     }
 }

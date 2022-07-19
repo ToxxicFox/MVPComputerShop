@@ -54,7 +54,7 @@ class CartFragmentFlowNavigationFragment : Fragment(), BackButtonListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (childFragmentManager.findFragmentById(R.id.tab_catalog_nav_container) == null) {
+        if (childFragmentManager.findFragmentById(R.id.tab_cart_nav_container) == null) {
             routerProfile.replaceScreen(screenOpenCart.openCartFragment())
         }
     }

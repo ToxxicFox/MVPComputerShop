@@ -33,17 +33,40 @@ class CatalogPresenter @Inject constructor(
         super.onDestroy()
     }
 
+    @Volatile
     private var currentPage = FIRST
     private var lastPage = LAST
+    private var recentCategoryId: Int? = null
 
     fun onLoadNextPage(){
         currentPage++
-        if (currentPage <= lastPage) {
-            getProduct(currentPage)
+        if (recentCategoryId == null){
+            if (currentPage <= lastPage) {
+                getProducts(currentPage)
+            }
+        }
+        if (recentCategoryId != null){
+            if (currentPage <= lastPage) {
+                getProductsByFilters(recentCategoryId!!, currentPage)
+            }
         }
     }
 
-    private fun getProduct(nextPage: Int){
+    fun setFilterById(categoryId: Int){
+        currentPage = FIRST
+        viewState.setFilter()
+        recentCategoryId = if (recentCategoryId == categoryId) {
+            null
+        } else {
+            categoryId
+        }
+        if (recentCategoryId == null){
+            getProducts(currentPage)
+        }
+        recentCategoryId?.let { getProductsByFilters(it, currentPage) }
+    }
+
+    private fun getProducts(nextPage: Int){
         getProductsUseCase.getProducts(nextPage)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -65,6 +88,28 @@ class CatalogPresenter @Inject constructor(
             }).let(compositeDisposable::add)
     }
 
+    private fun getProductsByFilters(categoryId: Int, nextPage: Int){
+        getProductsByFilterUseCase.getProductsByFilter(categoryId, nextPage)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe {
+                // show loader
+            }
+            .doFinally {
+                // hide loader
+            }
+            .subscribe({
+                viewState.displayProducts(it.data)
+                val lastPageFromUri = Uri.parse(it.links.last).getQueryParameter("page")?.toInt()
+                if (lastPageFromUri != null) {
+                    lastPage = lastPageFromUri
+                }
+            }, { error ->
+                error.printStackTrace()
+                Log.e("FILTER", error.toString())
+            }).let(compositeDisposable::add)
+    }
+
     private fun getCategories(){
         getCategoriesUseCase.getCategories()
             .subscribeOn(Schedulers.io())
@@ -78,7 +123,7 @@ class CatalogPresenter @Inject constructor(
     }
 
     init {
-        getProduct(FIRST)
+        getProducts(FIRST)
         getCategories()
     }
 
