@@ -7,10 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.mvpcomputershop.App
-import com.example.mvpcomputershop.R
-import com.example.mvpcomputershop.data.network.api.AuthApi
 import com.example.mvpcomputershop.databinding.FragmentLoginBinding
-import com.example.mvpcomputershop.presentation.fragments.signup.SignUpFragment
 import com.example.mvpcomputershop.presentation.model.login.LoginViewModel
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
@@ -22,9 +19,6 @@ class LoginFragment : MvpAppCompatFragment(), ILoginView {
 
     @Inject
     lateinit var provider: Provider<LoginPresenter>
-
-    @Inject
-    lateinit var api: AuthApi
 
     @InjectPresenter
     lateinit var presenter: LoginPresenter
@@ -80,12 +74,7 @@ class LoginFragment : MvpAppCompatFragment(), ILoginView {
     }
 
     private fun openSignUpFragment() {
-        activity?.supportFragmentManager?.apply {
-            beginTransaction()
-                .replace(R.id.container, SignUpFragment())
-                .addToBackStack("")
-                .commit()
-        }
+        presenter.toSignUp()
     }
 
 }
