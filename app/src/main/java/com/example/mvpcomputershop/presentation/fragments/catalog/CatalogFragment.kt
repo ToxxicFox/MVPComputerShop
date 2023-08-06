@@ -1,52 +1,104 @@
 package com.example.mvpcomputershop.presentation.fragments.catalog
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.mvpcomputershop.R
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.mvpcomputershop.App
+import com.example.mvpcomputershop.databinding.FragmentCatalogBinding
+import com.example.mvpcomputershop.domain.entity.CategoryData
+import com.example.mvpcomputershop.domain.entity.ProductEntity
+import com.example.mvpcomputershop.presentation.adapters.CategoryViewAdapter
+import com.example.mvpcomputershop.presentation.adapters.ProductViewAdapter
+import moxy.MvpAppCompatFragment
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
+import javax.inject.Inject
+import javax.inject.Provider
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class CatalogFragment : MvpAppCompatFragment(), ICatalogView {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CatalogFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class CatalogFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    @Inject
+    lateinit var provider: Provider<CatalogPresenter>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    @InjectPresenter
+    lateinit var presenter: CatalogPresenter
+
+    @ProvidePresenter
+    fun providePresenter(): CatalogPresenter = provider.get()
+
+    private var initBinding: FragmentCatalogBinding? = null
+    private val binding
+        get() = initBinding
+
+    private val productAdapter = ProductViewAdapter()
+    private val categoryAdapter = CategoryViewAdapter(action = ::onFilterClick)
+
+    override fun onAttach(context: Context) {
+        App.appInstance?.appComponent?.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_catalog, container, false)
+        initBinding = FragmentCatalogBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CatalogFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setAdapters()
+        setListeners()
+    }
+
+    override fun displayProducts(items: ArrayList<ProductEntity>) {
+        productAdapter.setUpdateList(items)
+    }
+
+    override fun displayCategories(items: ArrayList<CategoryData>) {
+        categoryAdapter.setUpdateCategory(items)
+    }
+
+    override fun setFilter() {
+        productAdapter.clearList()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        initBinding = null
+    }
+
+    private fun setAdapters(){
+        val productView = binding?.productsList
+        productView?.layoutManager =
+            GridLayoutManager(activity, 2)
+        productView?.adapter = productAdapter
+
+        val categoryView = binding?.filterList
+        categoryView?.layoutManager =
+            LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
+        categoryView?.adapter = categoryAdapter
+    }
+
+    private fun setListeners(){
+        binding?.productsList?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1)){
+                    presenter.onLoadNextPage()
                 }
             }
+
+        })
+    }
+
+    private fun onFilterClick(id:Int){
+        presenter.setFilterById(id)
     }
 }
